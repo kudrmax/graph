@@ -30,6 +30,9 @@ namespace graph {
         graph::Graph<key_type, value_type, weight_type>::Node& operator[](key_type const key) {
             return m_map[key];
         }
+        graph::Graph<key_type, value_type, weight_type>::Node& at(key_type const key) {
+            return m_map.at(key);
+        }
         //Node* at(key);
         //size_t degree_in(key);
         //size_t degree_out(key);
