@@ -4,8 +4,25 @@
 
 int main() {
 
-    graph::Graph<int, int, int> gr1(11, 22, 33);
-    gr1.begin()->second;
+//    graph::Graph<int, std::string, int> gr(1, "one", 11);
+//    graph::Graph<int, std::string, int>::Node node(5, "five", 55);
+//    gr[5] = node;
+//    gr.print();
+
+    graph::Graph<int, std::string, int> gr;
+    gr[1] = graph::Graph<int, std::string, int>::Node(1, "one", 11);
+    gr[2] = graph::Graph<int, std::string, int>::Node(2, "two", 22);
+    gr[3] = graph::Graph<int, std::string, int>::Node(3, "three", 33);
+    gr.print();
+
+//    gr[6] = graph::Graph<int, std::string, int>::Node(6, "six", 66);
+
+//    std::unordered_map<int, std::string> map{{1, "one"}};
+//    map[2] = "two";
+//
+//    for (auto const& pair: map)
+//        std::cout << "{" << pair.first << ": " << pair.second << "}" << std::endl;
+
 
 //    gr1.begin()->print();
 //        gr1.m_map.begin();
