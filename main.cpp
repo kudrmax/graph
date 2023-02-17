@@ -9,15 +9,27 @@ int main() {
 //    gr[5] = node;
 //    gr.print();
 
-    graph::Graph<int, std::string, int> gr;
-    gr[1] = graph::Graph<int, std::string, int>::Node(1, "one", 11);
-    gr[2] = graph::Graph<int, std::string, int>::Node(2, "two", 22);
-    gr[3] = graph::Graph<int, std::string, int>::Node(3, "three", 33);
+    graph::Graph<std::string, int, double> gr;
+//    graph::Graph<std::string, int, double>::Node node(1);
+//    node.print();
+    gr.insert_node("three", 3);
+    gr.insert_node("two", 2);
     gr.print();
-//    gr.insert_node(4, "four");
-    std::cout << "ПРОБЕЛ" << std::endl;
-    gr.insert_edge({2, 3}, 77);
-    gr.print();
+    std::pair<std::string, std::string> pair = {"three", "two"};
+    gr.insert_edge(pair);
+//    gr[1] = graph::Graph<int, std::string, int>::Node(1, "one";
+//    gr[1] = graph::Graph<int, std::string, int>::Node(1, "one");
+//    gr[2] = graph::Graph<int, std::string, int>::Node(2, "two", 22);
+//    gr[3] = graph::Graph<int, std::string, int>::Node(3, "three", 33);
+//    gr.print();
+////    gr.insert_node(4, "four");
+//    std::cout << "ПРОБЕЛ" << std::endl;
+//    gr.insert_edge({2, 3}, 77);
+//    gr.print();
+
+
+
+
 //    gr.insert_node(4, "four");
 //    gr.print();
 //    graph::Graph<int, int, int>::iterator it_graph;
