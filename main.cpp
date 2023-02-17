@@ -13,14 +13,40 @@ int main() {
     gr[1] = graph::Graph<int, std::string, int>::Node(1, "one", 11);
     gr[2] = graph::Graph<int, std::string, int>::Node(2, "two", 22);
     gr[3] = graph::Graph<int, std::string, int>::Node(3, "three", 33);
-//    gr.print();
-    gr.insert_node(4, "four");
     gr.print();
+//    gr.insert_node(4, "four");
+    std::cout << "ПРОБЕЛ" << std::endl;
+    gr.insert_edge({2, 3}, 77);
+    gr.print();
+//    gr.insert_node(4, "four");
+//    gr.print();
+//    graph::Graph<int, int, int>::iterator it_graph;
+//    graph::Graph<int, int, int>::Node::iterator it_node;
+
 
 //    gr[6] = graph::Graph<int, std::string, int>::Node(6, "six", 66);
 
-//    std::unordered_map<int, std::string> map{{1, "one"}};
-//    map[2] = "two";
+//    std::unordered_map<std::string, std::unordered_map<std::string, int>> map("one",std::pair("two", 1));
+//    map["one"] = {"two", 1};
+//    map.emplace("one", std::pair("two", 1));
+//    map.emplace("two", std::make_pair("one", 2));
+//    std::pair<std::string, std::string> p = {"one", "two"};
+//    auto it_from = map.find(p.first);
+//    auto it_to = map.find(p.second);
+//    std::cout << "map: " << (map.begin()->second).begin()->first << std::endl;
+//    std::cout << "it_from: " << it_from->second << std::endl;
+//    std::cout << "it_to: " << it_to->second << std::endl;
+
+//    std::unordered_map<int, std::string> map;
+//    map.emplace(1, "one");
+//    map.emplace(2, "two");
+//    std::pair<int, int> p = {1, 2};
+//    auto it_from = map.find(p.first);
+//    auto it_to = map.find(p.second);
+//    std::cout << "map: " << map.begin()->second << std::endl;
+//    std::cout << "it_from: " << it_from->second << std::endl;
+//    std::cout << "it_to: " << it_to->second << std::endl;
+
 //
 //    for (auto const& pair: map)
 //        std::cout << "{" << pair.first << ": " << pair.second << "}" << std::endl;
