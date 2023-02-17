@@ -10,13 +10,20 @@ int main() {
 //    gr.print();
 
     graph::Graph<std::string, int, double> gr;
-//    graph::Graph<std::string, int, double>::Node node(1);
-//    node.print();
-    gr.insert_node("three", 3);
+    gr.insert_node("one", 1);
     gr.insert_node("two", 2);
+    gr.insert_node("three", 3);
     gr.print();
-    std::pair<std::string, std::string> pair = {"three", "two"};
-    gr.insert_edge(pair);
+    gr.insert_edge(std::make_pair("one", "two"), 12);
+    gr.insert_edge(std::make_pair("one", "three"), 13);
+    gr.insert_edge(std::make_pair("two", "three"), 23);
+    gr.insert_edge(std::make_pair("three", "two"), 32);
+    gr.print();
+
+
+
+
+
 //    gr[1] = graph::Graph<int, std::string, int>::Node(1, "one";
 //    gr[1] = graph::Graph<int, std::string, int>::Node(1, "one");
 //    gr[2] = graph::Graph<int, std::string, int>::Node(2, "two", 22);

@@ -44,20 +44,14 @@ namespace graph {
             return m_map.insert_or_assign_node(std::pair{key, value});
         }
 //        std::pair<typename Node::iterator, bool>
-        void insert_edge(std::pair<key_type, key_type> p) {
+        void insert_edge(std::pair<key_type, key_type> p, weight_type weight) {
             auto it_from = m_map.find(p.first);
             auto it_to = m_map.find(p.second);
             if (it_from == m_map.end() || it_to == m_map.end()) {
                 std::cout << "There is no key" << std::endl;
-                return;
+//                return;
             }
-//            m_map.find(p.first)->second.print(); // итератор на нужный Node
-//            m_map.end()->second.print();
-            auto it_node = m_map.find(p.first)->second;
-//            auto it_edge = it_node.edge;
-//            some_shit.emplace(p.first, 0);
-//            some_shit.first = p.second;
-//            it_from->second.edge().second = weight;
+            it_from->second.add_edge(p.second, weight);
         }
 //        std::pair<std::unordered_map<key_type, weight_type>::iterator, bool> insert_edge() {
 //            return m_map.insert_or_assign_node(std::pair{key, value});
@@ -96,7 +90,8 @@ public:
 
     void clear() { m_edge.clear(); }
     void print() const;
-    std::unordered_map<key_type, weight_type> edge() { return m_edge; }
+    void add_edge(key_type key, weight_type weight) { m_edge.emplace(key, weight); }
+    std::unordered_map<key_type, weight_type>& edge() { return m_edge; }
 
 //    void swap(Node& obj1, Node& obj2);
 private:
@@ -114,12 +109,12 @@ private:
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::Node::print() const {
 //    std::cout << "NODE" << std::endl;
-    std::cout << "m_value_node: " << m_value << std::endl;
+    std::cout << m_value << "" << std::endl;
     for (auto const& pair: m_edge)
-        std::cout << "m_edge: {" << pair.first << ": " << pair.second << "}" << std::endl;
-    std::cout << "empty_edge(): " << empty() << std::endl;
-    std::cout << "size_edge(): " << size() << std::endl;
-    std::cout << std::endl;
+        std::cout << " —> " << pair.first << " (" << pair.second << ")" << std::endl;
+//    std::cout << "empty_edge(): " << empty() << std::endl;
+//    std::cout << "size_edge(): " << size() << std::endl;
+//    std::cout << std::endl;
 };
 
 template<typename key_type, typename value_type, typename weight_type>
@@ -129,7 +124,7 @@ void graph::Graph<key_type, value_type, weight_type>::print() const {
     std::cout << "size_graph(): " << size() << std::endl;
     std::cout << std::endl;
     for (auto const& pair: m_map) {
-        std::cout << "key: " << pair.first << std::endl;
+        std::cout << "" << pair.first << ": ";
         pair.second.print();
     }
 };
