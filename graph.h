@@ -27,16 +27,22 @@ namespace graph {
         void clear() { m_map.clear(); };
         void swap();
 
-        graph::Graph<key_type, value_type, weight_type>::Node& operator[](key_type const key) {
+        Node& operator[](key_type const key) {
             return m_map[key];
         }
-        graph::Graph<key_type, value_type, weight_type>::Node& at(key_type const key) {
+        Node& at(key_type const key) {
             return m_map.at(key);
         }
-        //Node* at(key);
         //size_t degree_in(key);
         //size_t degree_out(key);
         //bool loop(key);
+
+        std::pair<iterator, bool> insert_node(key_type key, value_type value) {
+            return m_map.insert(std::pair{key, value});
+        }
+        std::pair<iterator, bool> insert_or_assign_node(key_type key, value_type value) {
+            return m_map.insert_or_assign_node(std::pair{key, value});
+        }
         void print() const;
 
 //        std::pair<Graph::iterator, bool> insert_node(key_type key, value_type val);

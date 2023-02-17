@@ -13,6 +13,8 @@ int main() {
     gr[1] = graph::Graph<int, std::string, int>::Node(1, "one", 11);
     gr[2] = graph::Graph<int, std::string, int>::Node(2, "two", 22);
     gr[3] = graph::Graph<int, std::string, int>::Node(3, "three", 33);
+//    gr.print();
+    gr.insert_node(4, "four");
     gr.print();
 
 //    gr[6] = graph::Graph<int, std::string, int>::Node(6, "six", 66);
