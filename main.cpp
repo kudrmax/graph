@@ -14,11 +14,12 @@ int main() {
     gr.insert_node("two", 2);
     gr.insert_node("three", 3);
     gr.print();
-    auto a = gr.insert_edge(std::make_pair("one", "two"), 12);
+    auto a = gr.insert_edge(std::make_pair("one", "ph"), 12);
     gr.insert_edge(std::make_pair("one", "three"), 13);
     gr.insert_edge(std::make_pair("two", "three"), 23);
     gr.insert_edge(std::make_pair("three", "two"), 32);
     gr.print();
+    std::cout << a.second << std::endl;
 
 
 
