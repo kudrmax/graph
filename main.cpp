@@ -13,12 +13,20 @@ int main() {
     gr.insert_edge(std::make_pair("one", "two"), 12);
     gr.insert_edge(std::make_pair("one", "three"), 13);
     gr.insert_edge(std::make_pair("four", "two"), 42);
+    gr.insert_edge(std::make_pair("two", "four"), 24);
+    gr.insert_edge(std::make_pair("two", "two"), 24);
 
     gr.print();
-    std::cout << gr.degree_out("one") << std::endl;
-    std::cout << gr.degree_out("two") << std::endl;
-    std::cout << gr.degree_out("three") << std::endl;
-    std::cout << gr.degree_out("four") << std::endl;
+//    std::cout << gr.degree_out("one") << std::endl;
+//    std::cout << gr.degree_out("two") << std::endl;
+//    std::cout << gr.degree_out("three") << std::endl;
+//    std::cout << gr.degree_out("four") << std::endl;
+
+//    std::cout << gr.loop("one") << std::endl;
+//    std::cout << gr.loop("two") << std::endl;
+//    std::cout << gr.loop("three") << std::endl;
+//    std::cout << gr.loop("four") << std::endl;
+    std::cout << gr.loop("five") << std::endl;
 
 
 //    graph::Graph<std::string, int, double> gr;

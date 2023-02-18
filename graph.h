@@ -110,10 +110,14 @@ size_t graph::Graph<key_type, value_type, weight_type>::degree_out(key_type key)
 
 template<typename key_type, typename value_type, typename weight_type>
 bool graph::Graph<key_type, value_type, weight_type>::loop(key_type key) const {
-    m_map.find(key);
-    return 0;
+    if (!m_map.count(key))
+        return false;
+    auto node = m_map.find(key)->second;
+    auto edge_map = node.edge();
+    for (auto const& pair: edge_map)
+        if (pair.first == key) return true;
+    return false;
 }
-
 
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::Node::print() const {
