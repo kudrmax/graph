@@ -21,12 +21,14 @@ namespace graph {
         bool empty() const { return m_map.empty(); };
         size_t size() const { return m_map.size(); };
         void clear() { m_map.clear(); };
-        void swap();
+        void swap(Graph<key_type, value_type, weight_type>&);
         void print() const;
 
         Node& operator[](key_type const key) { return m_map[key]; }
         Node& at(key_type const key) { return m_map.at(key); }
-        //size_t degree_in(key);
+        size_t degree_in(key_type key) {
+
+        };
         //size_t degree_out(key);
         //bool loop(key);
 
@@ -36,10 +38,14 @@ namespace graph {
         std::pair<iterator, bool> insert_or_assign_node(key_type key, value_type value) {
             return m_map.insert_or_assign_node({key, value});
         }
-        std::pair<typename Node::iterator, bool> insert_edge(std::pair<key_type, key_type> p, weight_type weight);
+        std::pair<typename Node::iterator, bool> insert_edge(std::pair<key_type, key_type>, weight_type);
     private:
         std::unordered_map<key_type, Node> m_map;
     };
+
+    template<typename key_type, typename value_type, typename weight_type>
+    void swap(Graph<key_type, value_type, weight_type>& gr1,
+              Graph<key_type, value_type, weight_type>& gr2) { gr1.swap(gr2); }
 }
 
 
@@ -62,7 +68,6 @@ public:
     void clear() { m_edge.clear(); }
     void print() const;
     value_type& value() { return m_value; }
-//    void swap(Node& obj1, Node& obj2);
 
     std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight) {
         return m_edge.emplace(key, weight); // мб заменить на инсерт?
@@ -73,13 +78,10 @@ private:
     std::unordered_map<key_type, weight_type> m_edge; // ребро, имеющее вес
 };
 
-//template<typename key_type, typename value_type, typename weight_type>
-//void graph::swap(Node& obj1, Node& obj2) {
-//    Node temp = obj1;
-//    obj1 = obj2;
-//    obj2 = temp;
-//}
-
+template<typename key_type, typename value_type, typename weight_type>
+void graph::Graph<key_type, value_type, weight_type>::swap(Graph<key_type, value_type, weight_type>& gr) {
+    m_map.swap(gr.m_map);
+}
 
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::Node::iterator, bool>
@@ -104,11 +106,12 @@ void graph::Graph<key_type, value_type, weight_type>::Node::print() const {
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::print() const {
     std::cout << "GRAPH\n" << std::endl;
-    std::cout << "empty_graph(): " << empty() << std::endl;
-    std::cout << "size_graph(): " << size() << std::endl;
-    std::cout << std::endl;
+//    std::cout << "empty_graph(): " << empty() << std::endl;
+//    std::cout << "size_graph(): " << size() << std::endl;
+//    std::cout << std::endl;
     for (auto const& pair: m_map) {
         std::cout << "" << pair.first << ": ";
         pair.second.print();
     }
+    std::cout << std::endl;
 };

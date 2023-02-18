@@ -4,27 +4,42 @@
 
 int main() {
 
+    graph::Graph<std::string, int, double> gr1;
+    gr1.insert_node("one", 1);
+    gr1.insert_node("two", 2);
+
+    graph::Graph<std::string, int, double> gr2;
+    gr2.insert_node("three", 3);
+    gr2.insert_node("four", 4);
+
+    gr1.print();
+    gr2.print();
+
+    swap(gr1, gr2);
+
+    gr1.print();
+    gr2.print();
+
+
+
+//    graph::Graph<std::string, int, double> gr;
+//    gr.insert_node("one", 1);
+//    gr.insert_node("two", 2);
+//    gr.insert_node("three", 3);
+//    gr.print();
+//    auto a = gr.insert_edge(std::make_pair("one", "two"), 12);
+//    gr.insert_edge(std::make_pair("one", "three"), 13);
+//    gr.insert_edge(std::make_pair("one", "three"), 13);
+//    gr.insert_edge(std::make_pair("two", "three"), 23);
+//    gr.insert_edge(std::make_pair("three", "two"), 32);
+//    gr.print();
+
+
+
 //    graph::Graph<int, std::string, int> gr(1, "one", 11);
 //    graph::Graph<int, std::string, int>::Node node(5, "five", 55);
 //    gr[5] = node;
 //    gr.print();
-
-    graph::Graph<std::string, int, double> gr;
-    gr.insert_node("one", 1);
-    gr.insert_node("two", 2);
-    gr.insert_node("three", 3);
-    gr.print();
-    auto a = gr.insert_edge(std::make_pair("one", "two"), 12);
-    gr.insert_edge(std::make_pair("one", "three"), 13);
-    gr.insert_edge(std::make_pair("one", "three"), 13);
-    gr.insert_edge(std::make_pair("two", "three"), 23);
-    gr.insert_edge(std::make_pair("three", "two"), 32);
-    gr.print();
-    std::cout << a.second << std::endl;
-
-
-
-
 
 //    gr[1] = graph::Graph<int, std::string, int>::Node(1, "one";
 //    gr[1] = graph::Graph<int, std::string, int>::Node(1, "one");
