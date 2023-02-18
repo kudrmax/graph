@@ -4,22 +4,21 @@
 
 int main() {
 
-    graph::Graph<std::string, int, double> gr1;
-    gr1.insert_node("one", 1);
-    gr1.insert_node("two", 2);
+    graph::Graph<std::string, int, double> gr;
+    gr.insert_node("one", 1);
+    gr.insert_node("two", 2);
+    gr.insert_node("three", 3);
+    gr.insert_node("four", 4);
 
-    graph::Graph<std::string, int, double> gr2;
-    gr2.insert_node("three", 3);
-    gr2.insert_node("four", 4);
+    gr.insert_edge(std::make_pair("one", "two"), 12);
+    gr.insert_edge(std::make_pair("one", "three"), 13);
+    gr.insert_edge(std::make_pair("four", "two"), 42);
 
-    gr1.print();
-    gr2.print();
-
-    swap(gr1, gr2);
-
-    gr1.print();
-    gr2.print();
-
+    gr.print();
+    std::cout << gr.degree_out("one") << std::endl;
+    std::cout << gr.degree_out("two") << std::endl;
+    std::cout << gr.degree_out("three") << std::endl;
+    std::cout << gr.degree_out("four") << std::endl;
 
 
 //    graph::Graph<std::string, int, double> gr;

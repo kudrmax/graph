@@ -11,26 +11,24 @@ namespace graph {
         using const_iterator = typename std::unordered_map<key_type, Node>::const_iterator;
         using iterator = typename std::unordered_map<key_type, Node>::iterator;
 
-        const_iterator cbegin() const { return m_map.cbegin(); };
-        const_iterator cend() const { return m_map.cend(); };
-        iterator begin() { return m_map.begin(); };
-        iterator end() { return m_map.end(); };
+        const_iterator cbegin() const { return m_map.cbegin(); }
+        const_iterator cend() const { return m_map.cend(); }
+        iterator begin() { return m_map.begin(); }
+        iterator end() { return m_map.end(); }
 
         Graph() = default;
 
-        bool empty() const { return m_map.empty(); };
-        size_t size() const { return m_map.size(); };
-        void clear() { m_map.clear(); };
+        bool empty() const { return m_map.empty(); }
+        size_t size() const { return m_map.size(); }
+        void clear() { m_map.clear(); }
         void swap(Graph<key_type, value_type, weight_type>&);
         void print() const;
 
         Node& operator[](key_type const key) { return m_map[key]; }
         Node& at(key_type const key) { return m_map.at(key); }
-        size_t degree_in(key_type key) {
-
-        };
-        //size_t degree_out(key);
-        //bool loop(key);
+        size_t degree_in(key_type key) const { return m_map.find(key)->second.size(); }
+        size_t degree_out(key_type) const;
+        bool loop(key_type) const;
 
         std::pair<iterator, bool> insert_node(key_type key, value_type value) {
             return m_map.insert({key, value});
@@ -72,6 +70,7 @@ public:
     std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight) {
         return m_edge.emplace(key, weight); // мб заменить на инсерт?
     }
+    std::unordered_map<key_type, weight_type>& edge() { return m_edge; }
 //    std::pair<Graph::Node::iterator, bool> end_edge() { return {m_edge.begin(), false}; }
 private:
     value_type m_value; // значение ноды
@@ -95,6 +94,26 @@ graph::Graph<key_type, value_type, weight_type>::insert_edge(std::pair<key_type,
     }
     return it_from->second.add_edge(p.second, weight);
 }
+
+template<typename key_type, typename value_type, typename weight_type>
+size_t graph::Graph<key_type, value_type, weight_type>::degree_out(key_type key) const {
+    size_t degree_out_count = 0;
+    for (auto const& pair: m_map) {
+        if (pair.first != key) {
+            auto node = pair.second;
+            auto edge_map = node.edge();
+            if (edge_map.find(key) != edge_map.end()) ++degree_out_count;
+        }
+    }
+    return degree_out_count;
+}
+
+template<typename key_type, typename value_type, typename weight_type>
+bool graph::Graph<key_type, value_type, weight_type>::loop(key_type key) const {
+    m_map.find(key);
+    return 0;
+}
+
 
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::Node::print() const {
