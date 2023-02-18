@@ -44,14 +44,16 @@ namespace graph {
             return m_map.insert_or_assign_node(std::pair{key, value});
         }
 //        std::pair<typename Node::iterator, bool>
-        void insert_edge(std::pair<key_type, key_type> p, weight_type weight) {
+        std::pair<Graph::iterator, bool>
+        insert_edge(std::pair<key_type, key_type> p, weight_type weight) {
             auto it_from = m_map.find(p.first);
             auto it_to = m_map.find(p.second);
             if (it_from == m_map.end() || it_to == m_map.end()) {
-                std::cout << "There is no key" << std::endl;
-//                return;
+                std::cout << "There is no key" << std::endl; // заменить потом на искобчение
+                return {m_map.end(), false}; // хз, мб нужно итератор на другое возвращать
             }
             it_from->second.add_edge(p.second, weight);
+            return {it_from, true};
         }
 //        std::pair<std::unordered_map<key_type, weight_type>::iterator, bool> insert_edge() {
 //            return m_map.insert_or_assign_node(std::pair{key, value});
@@ -90,9 +92,9 @@ public:
 
     void clear() { m_edge.clear(); }
     void print() const;
-    void add_edge(key_type key, weight_type weight) { m_edge.emplace(key, weight); }
-    std::unordered_map<key_type, weight_type>& edge() { return m_edge; }
-
+    std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight) {
+        return m_edge.emplace(key, weight);
+    }
 //    void swap(Node& obj1, Node& obj2);
 private:
     value_type m_value; // значение ноды
@@ -105,6 +107,8 @@ private:
 //    obj1 = obj2;
 //    obj2 = temp;
 //}
+
+
 
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::Node::print() const {
