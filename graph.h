@@ -26,6 +26,7 @@ namespace graph {
 
         Node& operator[](key_type const key) { return m_map[key]; }
         Node& at(key_type const key) { return m_map.at(key); }
+
         size_t degree_in(key_type key) const { return m_map.find(key)->second.size(); }
         size_t degree_out(key_type) const;
         bool loop(key_type) const;
@@ -36,7 +37,9 @@ namespace graph {
         std::pair<iterator, bool> insert_or_assign_node(key_type key, value_type value) {
             return m_map.insert_or_assign_node({key, value});
         }
+
         std::pair<typename Node::iterator, bool> insert_edge(std::pair<key_type, key_type>, weight_type);
+
     private:
         std::unordered_map<key_type, Node> m_map;
     };
@@ -68,13 +71,14 @@ public:
     value_type& value() { return m_value; }
 
     std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight) {
-        return m_edge.emplace(key, weight); // мб заменить на инсерт?
-    }
+        return m_edge.emplace(key, weight);
+    } // мб заменить на инсерт?
+
     std::unordered_map<key_type, weight_type>& edge() { return m_edge; }
-//    std::pair<Graph::Node::iterator, bool> end_edge() { return {m_edge.begin(), false}; }
+
 private:
-    value_type m_value; // значение ноды
-    std::unordered_map<key_type, weight_type> m_edge; // ребро, имеющее вес
+    value_type m_value;
+    std::unordered_map<key_type, weight_type> m_edge;
 };
 
 template<typename key_type, typename value_type, typename weight_type>
@@ -88,7 +92,7 @@ graph::Graph<key_type, value_type, weight_type>::insert_edge(std::pair<key_type,
     auto it_from = m_map.find(p.first);
 //            auto it_to = m_map.find(p.second);
     if (it_from == m_map.end() || m_map.find(p.second) == m_map.end()) {
-        std::cout << "There is no key" << std::endl; // заменить потом на искобчение
+        std::cout << "There is no key" << std::endl; // заменить потом на exceptions
         return {it_from->second.begin(), false};
 //        return it_from->second.end_edge();
     }
