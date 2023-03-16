@@ -1,22 +1,29 @@
 #include "graph.h"
 #include <iostream>
+#include <fstream>
 #include <unordered_map>
 
 int main() {
 
-    graph::Graph<std::string, int, double> gr;
-    gr.insert_node("one", 1);
-    gr.insert_node("two", 2);
-    gr.insert_node("three", 3);
-    gr.insert_node("four", 4);
-
-    gr.insert_edge(std::make_pair("one", "two"), 12);
-    gr.insert_edge(std::make_pair("one", "three"), 13);
-    gr.insert_edge(std::make_pair("four", "two"), 42);
-    gr.insert_edge(std::make_pair("two", "four"), 24);
-    gr.insert_edge(std::make_pair("two", "two"), 24);
+    graph::Graph<size_t, std::pair<int, int>, double> gr;
+    gr.insert_node(1, { 0, 0 });
+    gr.insert_node(2, { 0, 0 });
+    gr.insert_node(3, { 0, 0 });
+    gr.insert_edge({ 1, 1 }, 5);
+    gr.insert_edge({ 1, 3 }, 13);
+    gr.insert_edge({ 2, 1 }, 21);
 
     gr.print();
+
+    gr.print_matrix();
+
+//    std::ifstream fin("test.txt");
+//    auto gr2(gr);
+
+//    std::cout << gr;
+//    gr.print_table();
+
+
 //    std::cout << gr.degree_out("one") << std::endl;
 //    std::cout << gr.degree_out("two") << std::endl;
 //    std::cout << gr.degree_out("three") << std::endl;
@@ -26,7 +33,7 @@ int main() {
 //    std::cout << gr.loop("two") << std::endl;
 //    std::cout << gr.loop("three") << std::endl;
 //    std::cout << gr.loop("four") << std::endl;
-    std::cout << gr.loop("five") << std::endl;
+//    std::cout << gr.loop("five") << std::endl;
 
 
 //    graph::Graph<std::string, int, double> gr;

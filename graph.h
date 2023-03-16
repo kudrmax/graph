@@ -2,6 +2,8 @@
 
 #include <unordered_map>
 #include <iostream>
+#include <iomanip>
+#include <vector>
 
 namespace graph {
     template<typename key_type, typename value_type, typename weight_type>
@@ -16,13 +18,14 @@ namespace graph {
         iterator begin() { return m_map.begin(); }
         iterator end() { return m_map.end(); }
 
-        Graph() = default;
+//        Graph() = default;
 
         bool empty() const { return m_map.empty(); }
         size_t size() const { return m_map.size(); }
         void clear() { m_map.clear(); }
         void swap(Graph<key_type, value_type, weight_type>&);
         void print() const;
+        void print_matrix() const;
 
         Node& operator[](key_type const key) { return m_map[key]; }
         Node& at(key_type const key) { return m_map.at(key); }
@@ -32,14 +35,14 @@ namespace graph {
         bool loop(key_type) const;
 
         std::pair<iterator, bool> insert_node(key_type key, value_type value) {
-            return m_map.insert({key, value});
+            return m_map.insert({ key, value });
         }
         std::pair<iterator, bool> insert_or_assign_node(key_type key, value_type value) {
-            return m_map.insert_or_assign_node({key, value});
+            return m_map.insert_or_assign_node({ key, value });
         }
 
         std::pair<typename Node::iterator, bool> insert_edge(std::pair<key_type, key_type>, weight_type);
-
+        
     private:
         std::unordered_map<key_type, Node> m_map;
     };
@@ -68,13 +71,14 @@ public:
     size_t size() const { return m_edge.size(); }
     void clear() { m_edge.clear(); }
     void print() const;
+    void print_table() const;
     value_type& value() { return m_value; }
 
     std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight) {
         return m_edge.emplace(key, weight);
     } // мб заменить на инсерт?
 
-    std::unordered_map<key_type, weight_type>& edge() { return m_edge; }
+    std::unordered_map<key_type, weight_type> get_edge() const { return m_edge; }
 
 private:
     value_type m_value;
@@ -93,7 +97,7 @@ graph::Graph<key_type, value_type, weight_type>::insert_edge(std::pair<key_type,
 //            auto it_to = m_map.find(p.second);
     if (it_from == m_map.end() || m_map.find(p.second) == m_map.end()) {
         std::cout << "There is no key" << std::endl; // заменить потом на exceptions
-        return {it_from->second.begin(), false};
+        return { it_from->second.begin(), false };
 //        return it_from->second.end_edge();
     }
     return it_from->second.add_edge(p.second, weight);
@@ -125,7 +129,8 @@ bool graph::Graph<key_type, value_type, weight_type>::loop(key_type key) const {
 
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::Node::print() const {
-    std::cout << m_value << "" << std::endl;
+//    std::cout << m_value << "" << std::endl;
+    std::cout << "{" << m_value.first << ", " << m_value.second << "}" << std::endl;
     for (auto const& pair: m_edge)
         std::cout << " —> " << pair.first << " (" << pair.second << ")" << std::endl;
 };
@@ -142,3 +147,26 @@ void graph::Graph<key_type, value_type, weight_type>::print() const {
     }
     std::cout << std::endl;
 };
+
+template<typename key_type, typename value_type, typename weight_type>
+void graph::Graph<key_type, value_type, weight_type>::print_matrix() const {
+    auto size = this->size();
+    std::vector<int> vec(size * size, 0);
+    size_t i = 0;
+    size_t j = 0;
+    for (auto const& pair: m_map) {
+        auto node = pair.second;
+        auto edge = node.get_edge();
+        ++i;
+        for (auto const& ed: edge) {
+            vec[i + j] = ed.second;
+            ++j;
+        }
+    }
+    for (size_t ii = 0; ii < size; ++ii) {
+        std::cout << "| ";
+        for (size_t jj = 0; jj < size; ++jj)
+            std::cout << vec[ii + jj] << ' ';
+        std::cout << " |\n";
+    }
+}
