@@ -17,6 +17,8 @@ namespace graph {
         const_iterator cend() const { return m_map.cend(); }
         iterator begin() { return m_map.begin(); }
         iterator end() { return m_map.end(); }
+        const_iterator begin() const { return m_map.begin(); }
+        const_iterator end() const { return m_map.end(); }
 
         bool empty() const { return m_map.empty(); }
         size_t size() const { return m_map.size(); }
@@ -27,6 +29,7 @@ namespace graph {
 
         Node& operator[](key_type const key) { return m_map[key]; }
         Node& at(key_type const key) { return m_map.at(key); }
+        const_iterator find(key_type const key) const { return m_map.find(key); }
 
         size_t degree_in(key_type key) const { return m_map.find(key)->second.size(); }
         size_t degree_out(key_type) const;
@@ -68,13 +71,13 @@ public:
     size_t size() const { return m_edge.size(); }
     void clear() { m_edge.clear(); }
     void print() const;
-    value_type& value() { return m_value; }
+    value_type& value() const { return m_value; }
 
     std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight);
 //    std::unordered_map<key_type, weight_type> get_edge() const { return m_edge; }
 
 private:
-    value_type m_value;
+    mutable value_type m_value;
     std::unordered_map<key_type, weight_type> m_edge;
 };
 
@@ -138,13 +141,22 @@ bool graph::Graph<key_type, value_type, weight_type>::loop(key_type key) const {
     return false;
 }
 
+template<typename key_type, typename value_type = int, typename weight_type>
+void print_value(value_type val) {
+    std::cout << "AAA";
+}
+
+
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::Node::print() const {
 //    std::cout << m_value << "" << std::endl;
-    std::cout << "{" << m_value.first << ", " << m_value.second << "}" << std::endl;
+//    std::cout << "{" << m_value.first << ", " << m_value.second << "}" << std::endl;
+//    print_value(m_value);
+//    print_value(5);
     for (auto const& pair: m_edge)
         std::cout << " —> " << pair.first << " (" << pair.second << ")" << std::endl;
 };
+
 
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::print() const {
@@ -160,16 +172,15 @@ void graph::Graph<key_type, value_type, weight_type>::print() const {
 };
 
 template<typename key_type, typename value_type, typename weight_type>
-bool is_edge(typename graph::Graph<key_type, value_type, weight_type>::iterator row_it,
-             typename graph::Graph<key_type, value_type, weight_type>::iterator column_it) {
+bool is_edge(typename graph::Graph<key_type, value_type, weight_type>::const_iterator& row_it) {
     return true;
 }
 
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::print_matrix() const {
-//    auto row_it = this->begin();
-//    is_edge(row_it, row_it);
-    auto row_it = m_map.begin();
+//    const_iterator row_it = this->cbegin();
+//    is_edge(this->begin());
+//    auto row_it = m_map.begin();
 //    is_edge(row_it, row_it);
 
 
