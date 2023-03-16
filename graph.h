@@ -18,8 +18,6 @@ namespace graph {
         iterator begin() { return m_map.begin(); }
         iterator end() { return m_map.end(); }
 
-//        Graph() = default;
-
         bool empty() const { return m_map.empty(); }
         size_t size() const { return m_map.size(); }
         void clear() { m_map.clear(); }
@@ -34,15 +32,11 @@ namespace graph {
         size_t degree_out(key_type) const;
         bool loop(key_type) const;
 
-        std::pair<iterator, bool> insert_node(key_type key, value_type value) {
-            return m_map.insert({ key, value });
-        }
-        std::pair<iterator, bool> insert_or_assign_node(key_type key, value_type value) {
-            return m_map.insert_or_assign_node({ key, value });
-        }
+        std::pair<iterator, bool> insert_node(key_type key, value_type value);
+        std::pair<iterator, bool> insert_or_assign_node(key_type key, value_type value);
 
         std::pair<typename Node::iterator, bool> insert_edge(std::pair<key_type, key_type>, weight_type);
-        
+
     private:
         std::unordered_map<key_type, Node> m_map;
     };
@@ -52,12 +46,15 @@ namespace graph {
               Graph<key_type, value_type, weight_type>& gr2) { gr1.swap(gr2); }
 }
 
-
 template<typename key_type, typename value_type, typename weight_type>
 class graph::Graph<key_type, value_type, weight_type>::Node {
 public:
     Node() = default;
     Node(value_type value) : m_value(value) {};
+    // Node(const Node&);
+    // Node(Node&&);
+    // operator= // copy
+    // operator= // move
 
     using const_iterator = typename std::unordered_map<key_type, weight_type>::const_iterator;
     using iterator = typename std::unordered_map<key_type, weight_type>::iterator;
@@ -71,19 +68,33 @@ public:
     size_t size() const { return m_edge.size(); }
     void clear() { m_edge.clear(); }
     void print() const;
-    void print_table() const;
     value_type& value() { return m_value; }
 
-    std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight) {
-        return m_edge.emplace(key, weight);
-    } // мб заменить на инсерт?
-
-    std::unordered_map<key_type, weight_type> get_edge() const { return m_edge; }
+    std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight);
+//    std::unordered_map<key_type, weight_type> get_edge() const { return m_edge; }
 
 private:
     value_type m_value;
     std::unordered_map<key_type, weight_type> m_edge;
 };
+
+template<typename key_type, typename value_type, typename weight_type>
+std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
+graph::Graph<key_type, value_type, weight_type>::insert_node(key_type key, value_type value) {
+    return m_map.insert({ key, value });
+}
+
+template<typename key_type, typename value_type, typename weight_type>
+std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
+graph::Graph<key_type, value_type, weight_type>::insert_or_assign_node(key_type key, value_type value) {
+    return m_map.insert_or_assign_node({ key, value });
+}
+
+template<typename key_type, typename value_type, typename weight_type>
+std::pair<typename graph::Graph<key_type, value_type, weight_type>::Node::iterator, bool>
+graph::Graph<key_type, value_type, weight_type>::Node::add_edge(key_type key, weight_type weight) {
+    return m_edge.emplace(key, weight);
+} // мб заменить на инсерт?
 
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::swap(Graph<key_type, value_type, weight_type>& gr) {
@@ -149,24 +160,68 @@ void graph::Graph<key_type, value_type, weight_type>::print() const {
 };
 
 template<typename key_type, typename value_type, typename weight_type>
+bool is_edge(typename graph::Graph<key_type, value_type, weight_type>::iterator row_it,
+             typename graph::Graph<key_type, value_type, weight_type>::iterator column_it) {
+    return true;
+}
+
+template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::print_matrix() const {
-    auto size = this->size();
-    std::vector<int> vec(size * size, 0);
-    size_t i = 0;
-    size_t j = 0;
-    for (auto const& pair: m_map) {
-        auto node = pair.second;
-        auto edge = node.get_edge();
-        ++i;
-        for (auto const& ed: edge) {
-            vec[i + j] = ed.second;
-            ++j;
-        }
-    }
-    for (size_t ii = 0; ii < size; ++ii) {
-        std::cout << "| ";
-        for (size_t jj = 0; jj < size; ++jj)
-            std::cout << vec[ii + jj] << ' ';
-        std::cout << " |\n";
-    }
+//    auto row_it = this->begin();
+//    is_edge(row_it, row_it);
+    auto row_it = m_map.begin();
+//    is_edge(row_it, row_it);
+
+
+//    for (auto row_it = this->cbegin(); row_it != this->cend(); ++row_it) {
+//        for (auto column_it = this->cbegin(); column_it != this->cend(); ++column_it) {
+//            if (is_edge(row_it, column_it)) {
+//                std::cout << 1 << ' ';
+//            } else {
+//                std::cout << 0 << ' ';
+//            }
+//        }
+//        std::cout << std::endl;
+//    }
+
+//    auto size = this->size();
+//    std::vector<std::tuple<key_type, key_type, weight_type>> vec(size * size);
+//    size_t i = 0;
+//    size_t j = 0;
+//    for (auto const& pair: m_map) {
+//        auto node = pair.second;
+//        auto edge = node.get_edge();
+//        ++i;
+//        for (auto const& ed: edge) {
+//            vec[i + j] = { i, j, ed.second };
+//            ++j;
+//        }
+//    }
+//    for (size_t ii = 0; ii < size; ++ii) {
+//        std::cout << "| ";
+//        for (size_t jj = 0; jj < size; ++jj)
+//            std::cout << std::get<2>(vec[ii + jj]) << ' ';
+//        std::cout << "|\n";
+//    }
+
+
+//    auto size = this->size();
+//    std::vector<int> vec(size * size, 0);
+//    size_t i = 0;
+//    size_t j = 0;
+//    for (auto const& pair: m_map) {
+//        auto node = pair.second;
+//        auto edge = node.get_edge();
+//        ++i;
+//        for (auto const& ed: edge) {
+//            vec[i + j] = ed.second;
+//            ++j;
+//        }
+//    }
+//    for (size_t ii = 0; ii < size; ++ii) {
+//        std::cout << "| ";
+//        for (size_t jj = 0; jj < size; ++jj)
+//            std::cout << vec[ii + jj] << ' ';
+//        std::cout << " |\n";
+//    }
 }
