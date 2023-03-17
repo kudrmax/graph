@@ -66,6 +66,8 @@ public:
     const_iterator cend() const { return m_edge.cend(); }
     iterator begin() { return m_edge.begin(); }
     iterator end() { return m_edge.end(); }
+    const_iterator begin() const { return m_edge.begin(); }
+    const_iterator end() const { return m_edge.end(); }
 
     bool empty() const { return m_edge.empty(); }
     size_t size() const { return m_edge.size(); }
@@ -74,7 +76,7 @@ public:
     value_type& value() const { return m_value; }
 
     std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight);
-//    std::unordered_map<key_type, weight_type> get_edge() const { return m_edge; }
+    std::unordered_map<key_type, weight_type> get_edge() const { return m_edge; }
 
 private:
     mutable value_type m_value;
@@ -149,10 +151,11 @@ void print_value(value_type val) {
 
 template<typename key_type, typename value_type, typename weight_type>
 void graph::Graph<key_type, value_type, weight_type>::Node::print() const {
-//    std::cout << m_value << "" << std::endl;
-//    std::cout << "{" << m_value.first << ", " << m_value.second << "}" << std::endl;
-//    print_value(m_value);
-//    print_value(5);
+////    std::cout << m_value << "" << std::endl;
+////    std::cout << "{" << m_value.first << ", " << m_value.second << "}" << std::endl;
+////    print_value(m_value);
+////    print_value(5);
+    std::cout << std::endl;
     for (auto const& pair: m_edge)
         std::cout << " —> " << pair.first << " (" << pair.second << ")" << std::endl;
 };
