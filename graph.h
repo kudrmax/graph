@@ -27,9 +27,10 @@ namespace graph {
         void print() const;
         void print_matrix() const;
 
-        Node& operator[](key_type const key) { return m_map[key]; }
-        Node& at(key_type const key) { return m_map.at(key); }
-        const_iterator find(key_type const key) const { return m_map.find(key); }
+        Node& operator[](const key_type key) { return m_map[key]; }
+        const Node& operator[](const key_type key) const { return m_map[key]; } // под вопросом
+        Node& at(const key_type key) { return m_map.at(key); }
+        const_iterator find(const key_type key) const { return m_map.find(key); }
 
         size_t degree_in(key_type key) const { return m_map.find(key)->second.size(); }
         size_t degree_out(key_type) const;
@@ -39,7 +40,8 @@ namespace graph {
         std::pair<iterator, bool> insert_or_assign_node(key_type key, value_type value);
 
         std::pair<typename Node::iterator, bool> insert_edge(std::pair<key_type, key_type>, weight_type);
-
+        Node node() { return m_map.second; } // под вопросом
+        key_type name() { return m_map.first; } // под вопросом
     private:
         std::unordered_map<key_type, Node> m_map;
     };
@@ -77,6 +79,7 @@ public:
 
     std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight);
     std::unordered_map<key_type, weight_type> get_edge() const { return m_edge; }
+
 
 private:
     mutable value_type m_value;
