@@ -32,8 +32,8 @@ namespace graph {
         Node& at(const key_type key) { return m_map.at(key); }
         const_iterator find(const key_type key) const { return m_map.find(key); }
 
-        size_t degree_in(key_type key) const { return m_map.find(key)->second.size(); }
-        size_t degree_out(key_type) const;
+        size_t degree_out(key_type key) const { return m_map.find(key)->second.size(); }
+        size_t degree_in(key_type) const;
         bool loop(key_type) const;
 
         std::pair<iterator, bool> insert_node(key_type key, value_type value);
@@ -78,7 +78,7 @@ public:
     value_type& value() const { return m_value; }
 
     std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight);
-    std::unordered_map<key_type, weight_type> get_edge() const { return m_edge; }
+    std::unordered_map<key_type, weight_type> edge() const { return m_edge; }
 
 
 private:
@@ -89,19 +89,22 @@ private:
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
 graph::Graph<key_type, value_type, weight_type>::insert_node(key_type key, value_type value) {
-    return m_map.insert({ key, value });
+    return m_map.insert({ key, { value }});
 }
 
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
 graph::Graph<key_type, value_type, weight_type>::insert_or_assign_node(key_type key, value_type value) {
-    return m_map.insert_or_assign_node({ key, value });
+    Node node{ value };
+    return m_map.insert_or_assign(key, Node{ value });
+//    return m_map.insert_or_assign( key, node);
+//    return m_map.insert_or_assign( key, { value });
 }
 
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::Node::iterator, bool>
 graph::Graph<key_type, value_type, weight_type>::Node::add_edge(key_type key, weight_type weight) {
-    return m_edge.emplace(key, weight);
+    return m_edge.insert({ key, weight });
 } // мб заменить на инсерт?
 
 template<typename key_type, typename value_type, typename weight_type>
@@ -123,7 +126,7 @@ graph::Graph<key_type, value_type, weight_type>::insert_edge(std::pair<key_type,
 }
 
 template<typename key_type, typename value_type, typename weight_type>
-size_t graph::Graph<key_type, value_type, weight_type>::degree_out(key_type key) const {
+size_t graph::Graph<key_type, value_type, weight_type>::degree_in(key_type key) const {
     size_t degree_out_count = 0;
     for (auto const& pair: m_map) {
         if (pair.first != key) {
@@ -241,4 +244,6 @@ void graph::Graph<key_type, value_type, weight_type>::print_matrix() const {
 //            std::cout << vec[ii + jj] << ' ';
 //        std::cout << " |\n";
 //    }
+
 }
+//void func_in_graph() {}
