@@ -19,6 +19,7 @@ namespace graph {
         class Node;
         using const_iterator = typename std::unordered_map<key_type, Node>::const_iterator;
         using iterator = typename std::unordered_map<key_type, Node>::iterator;
+        using pair_type = typename std::pair<const key_type, Node>;
 
         const_iterator cbegin() const noexcept { return m_map.cbegin(); }
         const_iterator cend() const noexcept { return m_map.cend(); }
@@ -44,6 +45,7 @@ namespace graph {
         bool loop(const key_type& key) const;
 
         std::pair<iterator, bool> insert_node(const key_type& key, const value_type& value);
+        std::pair<iterator, bool> insert_node(const key_type& key);
         std::pair<iterator, bool> insert_or_assign_node(const key_type& key, const value_type& value);
 
         std::pair<typename Node::iterator, bool> insert_edge(std::pair<key_type, key_type>, weight_type);
@@ -95,6 +97,12 @@ template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
 graph::Graph<key_type, value_type, weight_type>::insert_node(const key_type& key, const value_type& value) {
     return m_map.insert({ key, { value }});
+}
+
+template<typename key_type, typename value_type, typename weight_type>
+std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
+graph::Graph<key_type, value_type, weight_type>::insert_node(const key_type& key) {
+    return m_map.insert({ key, {}});
 }
 
 template<typename key_type, typename value_type, typename weight_type>
@@ -151,12 +159,14 @@ size_t graph::Graph<key_type, value_type, weight_type>::degree_out(const key_typ
 
 template<typename key_type, typename value_type, typename weight_type>
 bool graph::Graph<key_type, value_type, weight_type>::loop(const key_type& key) const {
-    if (!m_map.count(key))
-        return false;
-    auto node = m_map.find(key)->second;
+    auto it = find(key);
+    if (it == end())
+        throw GraphException("There is no key");
+    auto node = find(key)->second;
     auto edge_map = node.edge();
     for (auto const& pair: edge_map)
-        if (pair.first == key) return true;
+        if (pair.first == key)
+            return true;
     return false;
 }
 
