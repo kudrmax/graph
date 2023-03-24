@@ -10,7 +10,7 @@ namespace graph {
 
     struct GraphException : public std::runtime_error {
         GraphException(const char* message) : std::runtime_error(message) {}
-        GraphException(std::string& message) : std::runtime_error(message) {}
+        GraphException(const std::string& message) : std::runtime_error(message) {}
     };
 
     template<typename key_type, typename value_type, typename weight_type>
@@ -21,7 +21,6 @@ namespace graph {
         using iterator = typename std::unordered_map<key_type, Node>::iterator;
         using edge_iterator = typename Node::iterator;
         using const_edge_iterator = typename Node::const_iterator;
-        using pair_type = typename std::pair<const key_type, Node>;
         using node_type = Node;
 
         const_iterator cbegin() const noexcept { return m_map.cbegin(); }
@@ -51,6 +50,11 @@ namespace graph {
         std::pair<iterator, bool> insert_node(const key_type& key);
         std::pair<iterator, bool> insert_or_assign_node(const key_type& key, const value_type& value);
         std::pair<edge_iterator, bool> insert_edge(const std::pair<key_type, key_type>& p, const weight_type&);
+        std::pair<edge_iterator, bool>
+        insert_or_assign_edge(const std::pair<key_type, key_type>& p, const weight_type&);
+
+        size_t erase_node(const key_type& key);
+        iterator erase_node(const iterator& it_erase);
 
     private:
         std::unordered_map<key_type, Node> m_map;
@@ -87,9 +91,30 @@ public:
     const edge_type& edge() const noexcept { return m_edge; }
     edge_type& edge() noexcept { return m_edge; }
 
+    size_t erase_edge(const key_type& key) { return m_edge.erase(key); };
+    iterator erase_edge(const iterator& it) { return m_edge.erase(it); };
+
 private:
     value_type m_value;
     edge_type m_edge;
+};
+
+template<typename key_type, typename value_type, typename weight_type>
+size_t graph::Graph<key_type, value_type, weight_type>::erase_node(const key_type& key) {
+    size_t temp = m_map.erase(key);
+    for (auto& pair: *this)
+        pair.second.erase_edge(key);
+    return temp;
+};
+
+template<typename key_type, typename value_type, typename weight_type>
+typename graph::Graph<key_type, value_type, weight_type>::iterator
+graph::Graph<key_type, value_type, weight_type>::erase_node(const iterator& it_erase) {
+    auto key = it_erase->first;
+    auto temp = m_map.erase(it_erase);
+    for (auto& pair: *this)
+        pair.second.erase_edge(key);
+    return temp;
 };
 
 template<typename key_type, typename value_type, typename weight_type>
@@ -117,8 +142,19 @@ graph::Graph<key_type, value_type, weight_type>::insert_edge(const std::pair<key
     auto it_from = find(p.first);
     auto it_to = find(p.second);
     if (it_from == end() || it_to == end())
-        return { it_from->second.end(), false };
+        throw GraphException("There is no key");
     return it_from->second.edge().insert({ p.second, weight });
+}
+
+template<typename key_type, typename value_type, typename weight_type>
+std::pair<typename graph::Graph<key_type, value_type, weight_type>::Node::iterator, bool>
+graph::Graph<key_type, value_type, weight_type>::insert_or_assign_edge(const std::pair<key_type, key_type>& p,
+                                                                       const weight_type& weight) {
+    auto it_from = find(p.first);
+    auto it_to = find(p.second);
+    if (it_from == end() || it_to == end())
+        throw GraphException("There is no key");
+    return it_from->second.edge().insert_or_assign(p.second, weight);
 }
 
 template<typename key_type, typename value_type, typename weight_type>
