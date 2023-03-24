@@ -19,6 +19,8 @@ namespace graph {
         class Node;
         using const_iterator = typename std::unordered_map<key_type, Node>::const_iterator;
         using iterator = typename std::unordered_map<key_type, Node>::iterator;
+        using edge_iterator = typename Node::iterator;
+        using const_edge_iterator = typename Node::const_iterator;
         using pair_type = typename std::pair<const key_type, Node>;
 
         const_iterator cbegin() const noexcept { return m_map.cbegin(); }
@@ -47,8 +49,7 @@ namespace graph {
         std::pair<iterator, bool> insert_node(const key_type& key, const value_type& value);
         std::pair<iterator, bool> insert_node(const key_type& key);
         std::pair<iterator, bool> insert_or_assign_node(const key_type& key, const value_type& value);
-        std::pair<typename Node::iterator, bool>
-        insert_edge(const std::pair<key_type, key_type>& p, const weight_type&);
+        std::pair<edge_iterator, bool> insert_edge(const std::pair<key_type, key_type>& p, const weight_type&);
 
     private:
         std::unordered_map<key_type, Node> m_map;
@@ -71,6 +72,7 @@ public:
 
     using const_iterator = typename std::unordered_map<key_type, weight_type>::const_iterator;
     using iterator = typename std::unordered_map<key_type, weight_type>::iterator;
+    using edge_type = typename std::unordered_map<key_type, weight_type>;
 
     const_iterator cbegin() const { return m_edge.cbegin(); }
     const_iterator cend() const { return m_edge.cend(); }
@@ -86,13 +88,13 @@ public:
     const value_type& value() const { return m_value; }
     value_type& value() { return m_value; }
 
-    std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight);
+//    std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight);
     const std::unordered_map<key_type, weight_type>& edge() const { return m_edge; }
     std::unordered_map<key_type, weight_type>& edge() { return m_edge; }
 
 private:
     value_type m_value;
-    std::unordered_map<key_type, weight_type> m_edge;
+    edge_type m_edge;
 };
 
 template<typename key_type, typename value_type, typename weight_type>
@@ -113,11 +115,11 @@ graph::Graph<key_type, value_type, weight_type>::insert_or_assign_node(const key
     return m_map.insert_or_assign(key, Node{ value });
 }
 
-template<typename key_type, typename value_type, typename weight_type>
-std::pair<typename graph::Graph<key_type, value_type, weight_type>::Node::iterator, bool>
-graph::Graph<key_type, value_type, weight_type>::Node::add_edge(key_type key, weight_type weight) {
-    return m_edge.insert({ key, weight });
-} // мб заменить на инсерт?
+//template<typename key_type, typename value_type, typename weight_type>
+//std::pair<typename graph::Graph<key_type, value_type, weight_type>::Node::iterator, bool>
+//graph::Graph<key_type, value_type, weight_type>::Node::add_edge(key_type key, weight_type weight) {
+//    return m_edge.insert({ key, weight });
+//} // мб заменить на инсерт?
 
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::Node::iterator, bool>
