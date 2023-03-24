@@ -4,8 +4,15 @@
 #include <iostream>
 #include <iomanip>
 #include <vector>
+#include <exception>
 
 namespace graph {
+
+    struct GraphException : public std::runtime_error {
+        GraphException(const char* message) : std::runtime_error(message) {}
+        GraphException(std::string& message) : std::runtime_error(message) {}
+    };
+
     template<typename key_type, typename value_type, typename weight_type>
     class Graph {
     public:
@@ -13,26 +20,24 @@ namespace graph {
         using const_iterator = typename std::unordered_map<key_type, Node>::const_iterator;
         using iterator = typename std::unordered_map<key_type, Node>::iterator;
 
-        const_iterator cbegin() const { return m_map.cbegin(); }
-        const_iterator cend() const { return m_map.cend(); }
-        iterator begin() { return m_map.begin(); }
-        iterator end() { return m_map.end(); }
-        const_iterator begin() const { return m_map.begin(); }
-        const_iterator end() const { return m_map.end(); }
+        const_iterator cbegin() const noexcept { return m_map.cbegin(); }
+        const_iterator cend() const noexcept { return m_map.cend(); }
+        iterator begin() noexcept { return m_map.begin(); }
+        iterator end() noexcept { return m_map.end(); }
+        const_iterator begin() const noexcept { return m_map.begin(); }
+        const_iterator end() const noexcept { return m_map.end(); }
 
-        bool empty() const { return m_map.empty(); }
-        size_t size() const { return m_map.size(); }
-        void clear() { m_map.clear(); }
-        void swap(Graph<key_type, value_type, weight_type>&);
-        void print() const;
-        void print_matrix() const;
+        bool empty() const noexcept { return m_map.empty(); }
+        size_t size() const noexcept { return m_map.size(); }
+        void clear() noexcept { m_map.clear(); }
+        void swap(Graph<key_type, value_type, weight_type>& gr) { m_map.swap(gr.m_map); } // noexcept?
 
-        Node& operator[](const key_type& key) { return m_map[key]; }
         const Node& operator[](const key_type& key) const { return m_map[key]; }
-        Node& at(const key_type& key) { return m_map.at(key); }
-        const Node& at(const key_type& key) const { return m_map.at(key); }
-
+        Node& operator[](const key_type& key) { return m_map[key]; }
+        const Node& at(const key_type& key) const;
+        Node& at(const key_type& key);
         const_iterator find(const key_type key) const { return m_map.find(key); }
+        iterator find(const key_type key)  { return m_map.find(key); }
 
         size_t degree_out(const key_type& key) const { return m_map.find(key)->second.size(); }
         size_t degree_in(const key_type& key) const;
@@ -108,11 +113,6 @@ graph::Graph<key_type, value_type, weight_type>::Node::add_edge(key_type key, we
 } // мб заменить на инсерт?
 
 template<typename key_type, typename value_type, typename weight_type>
-void graph::Graph<key_type, value_type, weight_type>::swap(Graph<key_type, value_type, weight_type>& gr) {
-    m_map.swap(gr.m_map);
-}
-
-template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::Node::iterator, bool>
 graph::Graph<key_type, value_type, weight_type>::insert_edge(std::pair<key_type, key_type> p, weight_type weight) {
 
@@ -150,101 +150,29 @@ bool graph::Graph<key_type, value_type, weight_type>::loop(const key_type& key) 
     return false;
 }
 
-template<typename key_type, typename value_type = int, typename weight_type>
-void print_value(value_type val) {
-    std::cout << "AAA";
-}
-
-
 template<typename key_type, typename value_type, typename weight_type>
-void graph::Graph<key_type, value_type, weight_type>::Node::print() const {
-////    std::cout << m_value << "" << std::endl;
-////    std::cout << "{" << m_value.first << ", " << m_value.second << "}" << std::endl;
-////    print_value(m_value);
-////    print_value(5);
-    std::cout << std::endl;
-    for (auto const& pair: m_edge)
-        std::cout << " —> " << pair.first << " (" << pair.second << ")" << std::endl;
-};
-
-
-template<typename key_type, typename value_type, typename weight_type>
-void graph::Graph<key_type, value_type, weight_type>::print() const {
-    std::cout << "GRAPH\n" << std::endl;
-//    std::cout << "empty_graph(): " << empty() << std::endl;
-//    std::cout << "size_graph(): " << size() << std::endl;
-//    std::cout << std::endl;
-    for (auto const& pair: m_map) {
-        std::cout << "" << pair.first << ": ";
-        pair.second.print();
-    }
-    std::cout << std::endl;
-};
-
-template<typename key_type, typename value_type, typename weight_type>
-bool is_edge(typename graph::Graph<key_type, value_type, weight_type>::const_iterator& row_it) {
-    return true;
+const typename graph::Graph<key_type, value_type, weight_type>::Node&
+graph::Graph<key_type, value_type, weight_type>::at(const key_type& key) const {
+    auto it = find(key);
+    if (it == end())
+        throw GraphException("There is no key");
+    return it->second;
 }
 
 template<typename key_type, typename value_type, typename weight_type>
-void graph::Graph<key_type, value_type, weight_type>::print_matrix() const {
-//    const_iterator row_it = this->cbegin();
-//    is_edge(this->begin());
-//    auto row_it = m_map.begin();
-//    is_edge(row_it, row_it);
-
-
-//    for (auto row_it = this->cbegin(); row_it != this->cend(); ++row_it) {
-//        for (auto column_it = this->cbegin(); column_it != this->cend(); ++column_it) {
-//            if (is_edge(row_it, column_it)) {
-//                std::cout << 1 << ' ';
-//            } else {
-//                std::cout << 0 << ' ';
-//            }
-//        }
-//        std::cout << std::endl;
-//    }
-
-//    auto size = this->size();
-//    std::vector<std::tuple<key_type, key_type, weight_type>> vec(size * size);
-//    size_t i = 0;
-//    size_t j = 0;
-//    for (auto const& pair: m_map) {
-//        auto node = pair.second;
-//        auto edge = node.get_edge();
-//        ++i;
-//        for (auto const& ed: edge) {
-//            vec[i + j] = { i, j, ed.second };
-//            ++j;
-//        }
-//    }
-//    for (size_t ii = 0; ii < size; ++ii) {
-//        std::cout << "| ";
-//        for (size_t jj = 0; jj < size; ++jj)
-//            std::cout << std::get<2>(vec[ii + jj]) << ' ';
-//        std::cout << "|\n";
-//    }
-
-
-//    auto size = this->size();
-//    std::vector<int> vec(size * size, 0);
-//    size_t i = 0;
-//    size_t j = 0;
-//    for (auto const& pair: m_map) {
-//        auto node = pair.second;
-//        auto edge = node.get_edge();
-//        ++i;
-//        for (auto const& ed: edge) {
-//            vec[i + j] = ed.second;
-//            ++j;
-//        }
-//    }
-//    for (size_t ii = 0; ii < size; ++ii) {
-//        std::cout << "| ";
-//        for (size_t jj = 0; jj < size; ++jj)
-//            std::cout << vec[ii + jj] << ' ';
-//        std::cout << " |\n";
-//    }
-
+typename graph::Graph<key_type, value_type, weight_type>::Node&
+graph::Graph<key_type, value_type, weight_type>::at(const key_type& key) {
+    return const_cast<Graph<key_type, value_type, weight_type>::Node&>(
+            const_cast<const Graph<key_type, value_type, weight_type>*>(this)->at(key)
+            );
 }
-//void func_in_graph() {}
+
+//template<typename key_type, typename value_type, typename weight_type>
+//typename graph::Graph<key_type, value_type, weight_type>::Node&
+//graph::Graph<key_type, value_type, weight_type>::at(const key_type& key) {
+//    auto it = find(key);
+//    if (it == end())
+//        throw GraphException("There is no key");
+//    return it->second;
+//}
+
