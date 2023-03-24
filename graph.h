@@ -1,10 +1,6 @@
 #pragma once
 
 #include <unordered_map>
-#include <iostream>
-#include <iomanip>
-#include <vector>
-#include <exception>
 
 namespace graph {
 
