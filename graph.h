@@ -47,8 +47,8 @@ namespace graph {
         std::pair<iterator, bool> insert_node(const key_type& key, const value_type& value);
         std::pair<iterator, bool> insert_node(const key_type& key);
         std::pair<iterator, bool> insert_or_assign_node(const key_type& key, const value_type& value);
-
         std::pair<typename Node::iterator, bool> insert_edge(std::pair<key_type, key_type>, weight_type);
+
     private:
         std::unordered_map<key_type, Node> m_map;
     };
@@ -62,7 +62,7 @@ template<typename key_type, typename value_type, typename weight_type>
 class graph::Graph<key_type, value_type, weight_type>::Node {
 public:
     Node() = default;
-    Node(value_type value) : m_value(value) {};
+    explicit Node(value_type value) : m_value(value) {};
     // Node(const Node&);
     // Node(Node&&);
     // operator= // copy
@@ -96,22 +96,19 @@ private:
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
 graph::Graph<key_type, value_type, weight_type>::insert_node(const key_type& key, const value_type& value) {
-    return m_map.insert({ key, { value }});
+    return m_map.insert({ key, Node{ value }});
 }
 
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
 graph::Graph<key_type, value_type, weight_type>::insert_node(const key_type& key) {
-    return m_map.insert({ key, {}});
+    return m_map.insert({ key, Node{}});
 }
 
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
 graph::Graph<key_type, value_type, weight_type>::insert_or_assign_node(const key_type& key, const value_type& value) {
-    Node node{ value };
     return m_map.insert_or_assign(key, Node{ value });
-//    return m_map.insert_or_assign( key, node);
-//    return m_map.insert_or_assign( key, { value });
 }
 
 template<typename key_type, typename value_type, typename weight_type>
