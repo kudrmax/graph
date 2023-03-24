@@ -47,7 +47,8 @@ namespace graph {
         std::pair<iterator, bool> insert_node(const key_type& key, const value_type& value);
         std::pair<iterator, bool> insert_node(const key_type& key);
         std::pair<iterator, bool> insert_or_assign_node(const key_type& key, const value_type& value);
-        std::pair<typename Node::iterator, bool> insert_edge(std::pair<key_type, key_type>, weight_type);
+        std::pair<typename Node::iterator, bool>
+        insert_edge(const std::pair<key_type, key_type>& p, const weight_type&);
 
     private:
         std::unordered_map<key_type, Node> m_map;
@@ -86,7 +87,8 @@ public:
     value_type& value() { return m_value; }
 
     std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight);
-    std::unordered_map<key_type, weight_type> edge() const { return m_edge; }
+    const std::unordered_map<key_type, weight_type>& edge() const { return m_edge; }
+    std::unordered_map<key_type, weight_type>& edge() { return m_edge; }
 
 private:
     value_type m_value;
@@ -119,16 +121,13 @@ graph::Graph<key_type, value_type, weight_type>::Node::add_edge(key_type key, we
 
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::Node::iterator, bool>
-graph::Graph<key_type, value_type, weight_type>::insert_edge(std::pair<key_type, key_type> p, weight_type weight) {
-
-    auto it_from = m_map.find(p.first);
-//            auto it_to = m_map.find(p.second);
-    if (it_from == m_map.end() || m_map.find(p.second) == m_map.end()) {
-        std::cout << "There is no key" << std::endl; // заменить потом на exceptions
-        return { it_from->second.begin(), false };
-//        return it_from->second.end_edge();
-    }
-    return it_from->second.add_edge(p.second, weight);
+graph::Graph<key_type, value_type, weight_type>::insert_edge(const std::pair<key_type, key_type>& p,
+                                                             const weight_type& weight) {
+    auto it_from = find(p.first);
+    auto it_to = find(p.second);
+    if (it_from == end() || it_to == end())
+        return { it_from->second.end(), false };
+    return it_from->second.edge().insert({ p.second, weight });
 }
 
 template<typename key_type, typename value_type, typename weight_type>
