@@ -27,21 +27,21 @@ namespace graph {
         void print() const;
         void print_matrix() const;
 
-        Node& operator[](const key_type key) { return m_map[key]; }
-        const Node& operator[](const key_type key) const { return m_map[key]; } // под вопросом
-        Node& at(const key_type key) { return m_map.at(key); }
+        Node& operator[](const key_type& key) { return m_map[key]; }
+        const Node& operator[](const key_type& key) const { return m_map[key]; }
+        Node& at(const key_type& key) { return m_map.at(key); }
+        const Node& at(const key_type& key) const { return m_map.at(key); }
+
         const_iterator find(const key_type key) const { return m_map.find(key); }
 
-        size_t degree_out(key_type key) const { return m_map.find(key)->second.size(); }
-        size_t degree_in(key_type) const;
-        bool loop(key_type) const;
+        size_t degree_out(const key_type& key) const { return m_map.find(key)->second.size(); }
+        size_t degree_in(const key_type& key) const;
+        bool loop(const key_type& key) const;
 
-        std::pair<iterator, bool> insert_node(key_type key, value_type value);
-        std::pair<iterator, bool> insert_or_assign_node(key_type key, value_type value);
+        std::pair<iterator, bool> insert_node(const key_type& key, const value_type& value);
+        std::pair<iterator, bool> insert_or_assign_node(const key_type& key, const value_type& value);
 
         std::pair<typename Node::iterator, bool> insert_edge(std::pair<key_type, key_type>, weight_type);
-        Node node() { return m_map.second; } // под вопросом
-        key_type name() { return m_map.first; } // под вопросом
     private:
         std::unordered_map<key_type, Node> m_map;
     };
@@ -88,13 +88,13 @@ private:
 
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
-graph::Graph<key_type, value_type, weight_type>::insert_node(key_type key, value_type value) {
+graph::Graph<key_type, value_type, weight_type>::insert_node(const key_type& key, const value_type& value) {
     return m_map.insert({ key, { value }});
 }
 
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::iterator, bool>
-graph::Graph<key_type, value_type, weight_type>::insert_or_assign_node(key_type key, value_type value) {
+graph::Graph<key_type, value_type, weight_type>::insert_or_assign_node(const key_type& key, const value_type& value) {
     Node node{ value };
     return m_map.insert_or_assign(key, Node{ value });
 //    return m_map.insert_or_assign( key, node);
@@ -115,6 +115,7 @@ void graph::Graph<key_type, value_type, weight_type>::swap(Graph<key_type, value
 template<typename key_type, typename value_type, typename weight_type>
 std::pair<typename graph::Graph<key_type, value_type, weight_type>::Node::iterator, bool>
 graph::Graph<key_type, value_type, weight_type>::insert_edge(std::pair<key_type, key_type> p, weight_type weight) {
+
     auto it_from = m_map.find(p.first);
 //            auto it_to = m_map.find(p.second);
     if (it_from == m_map.end() || m_map.find(p.second) == m_map.end()) {
@@ -126,7 +127,7 @@ graph::Graph<key_type, value_type, weight_type>::insert_edge(std::pair<key_type,
 }
 
 template<typename key_type, typename value_type, typename weight_type>
-size_t graph::Graph<key_type, value_type, weight_type>::degree_in(key_type key) const {
+size_t graph::Graph<key_type, value_type, weight_type>::degree_in(const key_type& key) const {
     size_t degree_out_count = 0;
     for (auto const& pair: m_map) {
         if (pair.first != key) {
@@ -139,7 +140,7 @@ size_t graph::Graph<key_type, value_type, weight_type>::degree_in(key_type key) 
 }
 
 template<typename key_type, typename value_type, typename weight_type>
-bool graph::Graph<key_type, value_type, weight_type>::loop(key_type key) const {
+bool graph::Graph<key_type, value_type, weight_type>::loop(const key_type& key) const {
     if (!m_map.count(key))
         return false;
     auto node = m_map.find(key)->second;
