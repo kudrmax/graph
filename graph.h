@@ -32,14 +32,14 @@ namespace graph {
         void clear() noexcept { m_map.clear(); }
         void swap(Graph<key_type, value_type, weight_type>& gr) { m_map.swap(gr.m_map); } // noexcept?
 
-        const Node& operator[](const key_type& key) const { return m_map[key]; }
-        Node& operator[](const key_type& key) { return m_map[key]; }
+//        const Node& operator[](const key_type& key) const { return m_map[key]; }
+        Node& operator[](const key_type& key) noexcept { return m_map[key]; }
         const Node& at(const key_type& key) const;
         Node& at(const key_type& key);
-        const_iterator find(const key_type key) const { return m_map.find(key); }
-        iterator find(const key_type key)  { return m_map.find(key); }
+        const_iterator find(const key_type& key) const { return m_map.find(key); }
+        iterator find(const key_type& key) { return m_map.find(key); }
 
-        size_t degree_out(const key_type& key) const { return m_map.find(key)->second.size(); }
+        size_t degree_out(const key_type& key) const;
         size_t degree_in(const key_type& key) const;
         bool loop(const key_type& key) const;
 
@@ -80,14 +80,14 @@ public:
     size_t size() const { return m_edge.size(); }
     void clear() { m_edge.clear(); }
     void print() const;
-    value_type& value() const { return m_value; }
+    const value_type& value() const { return m_value; }
+    value_type& value() { return m_value; }
 
     std::pair<Graph::Node::iterator, bool> add_edge(key_type key, weight_type weight);
     std::unordered_map<key_type, weight_type> edge() const { return m_edge; }
 
-
 private:
-    mutable value_type m_value;
+    value_type m_value;
     std::unordered_map<key_type, weight_type> m_edge;
 };
 
@@ -128,16 +128,26 @@ graph::Graph<key_type, value_type, weight_type>::insert_edge(std::pair<key_type,
 
 template<typename key_type, typename value_type, typename weight_type>
 size_t graph::Graph<key_type, value_type, weight_type>::degree_in(const key_type& key) const {
+    auto it = find(key);
+    if (it == end())
+        throw GraphException("There is no key");
     size_t degree_out_count = 0;
-    for (auto const& pair: m_map) {
-        if (pair.first != key) {
-            auto node = pair.second;
-            auto edge_map = node.edge();
-            if (edge_map.find(key) != edge_map.end()) ++degree_out_count;
-        }
+    for (auto const& pair: *this) {
+        auto node = pair.second;
+        auto edge_map = node.edge();
+        if (edge_map.find(key) != edge_map.end()) ++degree_out_count;
     }
     return degree_out_count;
 }
+
+template<typename key_type, typename value_type, typename weight_type>
+size_t graph::Graph<key_type, value_type, weight_type>::degree_out(const key_type& key) const {
+    auto it = find(key);
+    if (it == end())
+        throw GraphException("There is no key");
+    return it->second.size();
+}
+
 
 template<typename key_type, typename value_type, typename weight_type>
 bool graph::Graph<key_type, value_type, weight_type>::loop(const key_type& key) const {
@@ -164,7 +174,7 @@ typename graph::Graph<key_type, value_type, weight_type>::Node&
 graph::Graph<key_type, value_type, weight_type>::at(const key_type& key) {
     return const_cast<Graph<key_type, value_type, weight_type>::Node&>(
             const_cast<const Graph<key_type, value_type, weight_type>*>(this)->at(key)
-            );
+    );
 }
 
 //template<typename key_type, typename value_type, typename weight_type>
