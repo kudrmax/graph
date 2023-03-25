@@ -1,12 +1,12 @@
 #pragma once
 
 #include <unordered_map>
+#include <stdexcept>
 
 namespace graph {
 
     struct GraphException : public std::runtime_error {
-        GraphException(const char* message) : std::runtime_error(message) {}
-        GraphException(const std::string& message) : std::runtime_error(message) {}
+        using runtime_error::runtime_error;
     };
 
     template<typename key_type, typename value_type, typename weight_type>
@@ -49,8 +49,8 @@ namespace graph {
         std::pair<edge_iterator, bool>
         insert_or_assign_edge(const std::pair<key_type, key_type>& p, const weight_type&);
 
-        size_t erase_node(const key_type& key);
-        iterator erase_node(const iterator& it_erase);
+        size_t erase_node(const key_type& key) noexcept;
+        iterator erase_node(const iterator& it_erase) noexcept;
 
     private:
         std::unordered_map<key_type, Node> m_map;
@@ -87,8 +87,8 @@ public:
     const edge_type& edge() const noexcept { return m_edge; }
     edge_type& edge() noexcept { return m_edge; }
 
-    size_t erase_edge(const key_type& key) { return m_edge.erase(key); };
-    iterator erase_edge(const iterator& it) { return m_edge.erase(it); };
+    size_t erase_edge(const key_type& key) noexcept { return m_edge.erase(key); };
+    iterator erase_edge(const iterator& it) noexcept { return m_edge.erase(it); };
 
 private:
     value_type m_value;
@@ -96,7 +96,7 @@ private:
 };
 
 template<typename key_type, typename value_type, typename weight_type>
-size_t graph::Graph<key_type, value_type, weight_type>::erase_node(const key_type& key) {
+size_t graph::Graph<key_type, value_type, weight_type>::erase_node(const key_type& key) noexcept {
     size_t temp = m_map.erase(key);
     for (auto& pair: *this)
         pair.second.erase_edge(key);
@@ -105,7 +105,7 @@ size_t graph::Graph<key_type, value_type, weight_type>::erase_node(const key_typ
 
 template<typename key_type, typename value_type, typename weight_type>
 typename graph::Graph<key_type, value_type, weight_type>::iterator
-graph::Graph<key_type, value_type, weight_type>::erase_node(const iterator& it_erase) {
+graph::Graph<key_type, value_type, weight_type>::erase_node(const iterator& it_erase) noexcept {
     auto key = it_erase->first;
     auto temp = m_map.erase(it_erase);
     for (auto& pair: *this)
@@ -201,16 +201,16 @@ graph::Graph<key_type, value_type, weight_type>::at(const key_type& key) const {
 template<typename key_type, typename value_type, typename weight_type>
 typename graph::Graph<key_type, value_type, weight_type>::Node&
 graph::Graph<key_type, value_type, weight_type>::at(const key_type& key) {
-    return const_cast<Graph<key_type, value_type, weight_type>::Node&>(
-            const_cast<const Graph<key_type, value_type, weight_type>*>(this)->at(key)
-    );
+    auto it = find(key);
+    if (it == end())
+        throw GraphException("There is no key");
+    return it->second;
 }
 
 //template<typename key_type, typename value_type, typename weight_type>
 //typename graph::Graph<key_type, value_type, weight_type>::Node&
 //graph::Graph<key_type, value_type, weight_type>::at(const key_type& key) {
-//    auto it = find(key);
-//    if (it == end())
-//        throw GraphException("There is no key");
-//    return it->second;
+//    return const_cast<Graph<key_type, value_type, weight_type>::Node&>(
+//            const_cast<const Graph<key_type, value_type, weight_type>*>(this)->at(key)
+//    );
 //}
